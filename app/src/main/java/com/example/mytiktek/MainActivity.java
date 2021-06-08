@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -91,6 +92,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void createLoginOrRegisterDialog()
     {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+        if(firebaseAuth.getCurrentUser() != null){
+            Intent intent;
+            if(firebaseAuth.getCurrentUser().isEmailVerified()){
+               intent  = new Intent(this, ShowProfileActivity.class);
+            }else{
+               // intent = new Intent(this, EmailVerification.class);
+                intent  = new Intent(this, ShowProfileActivity.class);
+
+            }
+            startActivityForResult(intent, 0);
+            return;
+        }
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.register_or_login_dialog);
         dialog.setTitle("My Profile");
@@ -117,8 +132,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onClick(View v) {
         if(v == btnMyProfile){
-            /*Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);*/
             createLoginOrRegisterDialog();
         }
     }

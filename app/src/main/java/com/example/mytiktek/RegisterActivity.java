@@ -64,10 +64,10 @@ public class RegisterActivity extends AppCompatActivity {
         fAuth.signOut();//logout
         ///
 
-        if(fAuth.getCurrentUser() != null){
+/*        if(fAuth.getCurrentUser() != null){
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
             finish();
-        }
+        }*/
 
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +77,11 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = mPassword.getText().toString().trim();
                 final String fullName = mFullName.getText().toString();
                 final String phone    = mPhone.getText().toString();
+
+                if(TextUtils.isEmpty(fullName)){
+                    mFullName.setError("Full Name is Required");
+                    return;
+                }
 
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email is Required.");
@@ -123,6 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
                             user.put("email",email);
                             user.put("phone",phone);
                             user.put("numberOfUploads","0");
+                            user.put("averageRate", "0");
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

@@ -1,26 +1,59 @@
 package com.example.mytiktek;
 
 public class User {
-    private String firstName, lastName;
+    private String fullName, email, numberOfUploads, phone, address, averageRate;
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getEmail() {
+        return email;
     }
 
-    public String getLastName() {
-        return lastName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public User(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public String getNumberOfUploads() {
+        return numberOfUploads;
     }
+
+    public void setNumberOfUploads(String numberOfUploads) {
+        this.numberOfUploads = numberOfUploads;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAverageRate() {
+        return averageRate;
+    }
+
+    public void setAverageRate(String averageRate) {
+        this.averageRate = averageRate;
+    }
+
+    public User(){
+
+    }
+
+
 }
