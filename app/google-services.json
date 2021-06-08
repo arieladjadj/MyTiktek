@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1007551086265",
+    "project_id": "my-tiktek",
+    "storage_bucket": "my-tiktek.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007551086265:android:43ed6dd5e88539dada6568",
+        "android_client_info": {
+          "package_name": "com.example.mytiktek"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007551086265-fi627s9al8ims29h8es46d1n0ns3o483.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfUSX0YgGxMyYlSRlnDejABL3Qz6fPDAs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007551086265-fi627s9al8ims29h8es46d1n0ns3o483.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

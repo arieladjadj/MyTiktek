@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".ShowSolution">
+
+    <include layout="@layout/tool_bar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        >
+        <ImageView
+            android:src="@drawable/ic_baseline_school_24"
+            android:id="@+id/showBookImage"
+            android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/showBookName"
+            android:text="book name"
+            android:textSize="20sp"
+            android:fontFamily="casual"
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSolutionRate"
+        android:text="Rate: 4.3"
+        android:textSize="15sp"
+        android:layout_gravity="center"
+        android:fontFamily="casual"
+        android:textAllCaps="false"
+        android:layout_marginTop="10dp"
+        android:textColor="#424345" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <RatingBar
+            android:id="@+id/rbRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize=".5"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_margin="20dp"
+            android:theme="@style/RatingBar"
+            />
+
+        <Button
+            android:id="@+id/btnSubmitRate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            android:text="Submit rate"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            />
+    </LinearLayout>
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/solutionImage2"
+        />
+
+
+
+</LinearLayout>

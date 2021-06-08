@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.mytiktek">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/my_tiktak_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/my_tiktak_icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyTiktek"
+        tools:ignore="AllowBackup">
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".ShowSolution" />
+        <activity android:name=".MainActivity" /> <!-- <activity android:name=".MainActivity"> -->
+        <activity android:name=".ExerciseSelection" />
+        <activity android:name=".BooksActivity" />
+        <activity android:name=".LoadingActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>
