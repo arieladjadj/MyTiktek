@@ -7,8 +7,6 @@ import java.util.ArrayList;
 public class SubjectsList {
     public static ArrayList<Subject> subjects = new ArrayList<Subject>();
     public static ArrayList<Bitmap> subjectImages = new ArrayList<Bitmap>();
-    //subjectImages.add(myBitMap); // Add a bitmap
-    //bitmapArray.get(0); // Get first bitmap
 
 
     public ArrayList<Bitmap> getSubjectImages() {

@@ -10,6 +10,7 @@ public class Subject {
     private String subjectName;
     private String documentId; // = subjectName
     private String subjectImageUrl;
+    private Bitmap SubjectImageBitmap;
 
     public Bitmap getSubjectImageBitmap() {
         return SubjectImageBitmap;
@@ -19,7 +20,6 @@ public class Subject {
         SubjectImageBitmap = subjectImageBitmap;
     }
 
-    private Bitmap SubjectImageBitmap;
 
     public Subject(){
     }
