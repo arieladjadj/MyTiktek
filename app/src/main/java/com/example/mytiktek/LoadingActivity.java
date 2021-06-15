@@ -1,17 +1,24 @@
 package com.example.mytiktek;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.example.mytiktek.DataObjects.Subject;
+import com.example.mytiktek.DataObjects.SubjectsList;
+import com.example.mytiktek.service.NetworkChangeListener;
+import com.example.mytiktek.service.NetworkHelper;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,6 +33,8 @@ import java.util.List;
 
 public class LoadingActivity extends AppCompatActivity {
 
+    private NetworkChangeListener networkChangeListener;
+
     private boolean hasChanged;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference subjectsRef = db.collection("subjects");
@@ -38,8 +47,23 @@ public class LoadingActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_loading);
 
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(LoadingActivity.this));
-        getImagedUrls();
+        checkNetworkConnection();
+    }
+
+    private void checkNetworkConnection() {
+        if(!NetworkHelper.isConnectedToInternet(this)) {
+            Toast.makeText(LoadingActivity.this, "Waiting for Internet connection", Toast.LENGTH_SHORT).show();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkNetworkConnection();
+                }
+            }, 3000);
+        }else{
+            ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(LoadingActivity.this));
+            getImagedUrls();
+        }
     }
 
     private void getImagedUrls(){
@@ -114,7 +138,16 @@ public class LoadingActivity extends AppCompatActivity {
                     }
                     downloadAndStoreImage();
                 }
-            });
+
+            })
+                .addOnFailureListener(new OnFailureListener() {
+
+                    @Override
+                    public void onFailure(@NonNull @org.jetbrains.annotations.NotNull Exception e) {
+                        getImagedUrls();
+                    }
+                });
+
     }
 
     //Download subject images (part of them) and insert them to public class SubjectImages
@@ -146,6 +179,12 @@ public class LoadingActivity extends AppCompatActivity {
     }
     
     void reduceTimeFromServer(){
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
     }
 }

@@ -1,17 +1,14 @@
 package com.example.mytiktek;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.transition.Slide;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,14 +19,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.mytiktek.Adapters.SubjectAdapter;
+import com.example.mytiktek.DataObjects.Subject;
+import com.example.mytiktek.DataObjects.SubjectsList;
+import com.example.mytiktek.service.NetworkChangeListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -42,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Subject subjectSelected;
     private Button btnMyProfile, btnSolutionsHistory;
     private ImageView btnHome, btnUploadSolution;
-
+    private NetworkChangeListener networkChangeListener;
     private Dialog dialog;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -59,9 +55,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         btnUploadSolution = (ImageView)findViewById(R.id.btnUploadSolution);
         btnUploadSolution.setOnClickListener(this);
+        btnHome = (ImageView)findViewById(R.id.btnHome);
+        btnHome.setOnClickListener(this);
+
         lvSubjects = (ListView)findViewById(R.id.lvSubjects);
         lvSubjects.setOnItemClickListener(this);
-        btnHome = (ImageView)findViewById(R.id.btnHome);
         btnMyProfile = (Button)findViewById(R.id.btnMyProfile);
         btnMyProfile.setOnClickListener(this);
         btnSolutionsHistory = (Button)findViewById(R.id.btnSolutionsHistory);
@@ -70,8 +68,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     protected void onStart() {
+        networkChangeListener = new NetworkChangeListener();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeListener, intentFilter);
+
         super.onStart();
         InitScreen();
+    }
+
+    @Override
+    protected void onStop() {
+        if(networkChangeListener != null){
+            unregisterReceiver(networkChangeListener);
+            networkChangeListener = null;
+        }
+        super.onStop();
     }
 
     @Override

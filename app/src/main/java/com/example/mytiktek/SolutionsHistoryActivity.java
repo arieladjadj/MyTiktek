@@ -2,21 +2,24 @@ package com.example.mytiktek;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.mytiktek.Adapters.HistoryAdapter;
+import com.example.mytiktek.DataObjects.Book;
+import com.example.mytiktek.service.NetworkChangeListener;
+import com.example.mytiktek.sqlite.HistoryDB;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -26,7 +29,8 @@ public class SolutionsHistoryActivity extends AppCompatActivity implements View.
 
     private ListView lvSolutions;
     private HistoryDB db;
-    private ImageView btnHome;
+    private NetworkChangeListener networkChangeListener;
+    private ImageView btnHome, btnUploadSolution;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,11 @@ public class SolutionsHistoryActivity extends AppCompatActivity implements View.
         getSupportActionBar().hide();
         setContentView(R.layout.activity_solutions_history);
 
+        networkChangeListener = new NetworkChangeListener();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeListener, intentFilter);
+        btnUploadSolution = (ImageView)findViewById(R.id.btnUploadSolution);
+        btnUploadSolution.setOnClickListener(this);
         btnHome = (ImageView)findViewById(R.id.btnHome);
         btnHome.setOnClickListener(this);
         lvSolutions = (ListView) findViewById(R.id.lvSolutions);
@@ -65,8 +74,19 @@ public class SolutionsHistoryActivity extends AppCompatActivity implements View.
     @Override
     public void onClick(View v) {
         if(v == btnHome){
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            setResult(0);
+            finish();
+        }else if(v == btnUploadSolution){
+            Toast.makeText(this, "Upload solution will be available on v2.0", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        if(networkChangeListener != null){
+            unregisterReceiver(networkChangeListener);
+            networkChangeListener = null;
+        }
+        super.onStop();
     }
 }

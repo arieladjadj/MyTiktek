@@ -3,8 +3,9 @@ package com.example.mytiktek;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -16,10 +17,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mytiktek.LocalData.CurrentSolutionImage;
+import com.example.mytiktek.LocalData.CurrentSubjectBooks;
+import com.example.mytiktek.service.NetworkChangeListener;
+import com.example.mytiktek.sqlite.HistoryDB;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firestore.v1.FirestoreGrpc;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -30,7 +34,6 @@ import static com.google.android.gms.common.util.CollectionUtils.mapOf;
 public class ShowSolution extends AppCompatActivity implements View.OnClickListener {
 
     private PhotoView solutionImage2;
-    private ImageView btnHome;
     private TextView tvBookName;
     private ImageView ivBookCover;
     private RatingBar ratingBar;
@@ -38,6 +41,8 @@ public class ShowSolution extends AppCompatActivity implements View.OnClickListe
     private Button btnSubmitRate;
     private boolean rated; //if user rate the solution already
     private FirebaseFirestore fStore;
+    private NetworkChangeListener networkChangeListener;
+    private ImageView btnHome, btnUploadSolution;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +52,23 @@ public class ShowSolution extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().hide();
         setContentView(R.layout.activity_show_solution);
 
+        networkChangeListener = new NetworkChangeListener();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeListener, intentFilter);
+
         rated = false;
         fStore = FirebaseFirestore.getInstance();
-        btnHome = (ImageView)findViewById(R.id.btnHome);
         tvBookName = (TextView)findViewById(R.id.showBookName);
         tvSolutionRate = (TextView)findViewById(R.id.tvSolutionRate);
         ivBookCover = (ImageView)findViewById(R.id.showBookImage);
         solutionImage2 = (PhotoView)findViewById(R.id.solutionImage2);
         btnSubmitRate = (Button)findViewById(R.id.btnSubmitRate);
 
+        btnUploadSolution = (ImageView)findViewById(R.id.btnUploadSolution);
+        btnUploadSolution.setOnClickListener(this);
+        btnHome = (ImageView)findViewById(R.id.btnHome);
         btnHome.setOnClickListener(this);
+
         btnSubmitRate.setOnClickListener(this);
         tvBookName.setText(CurrentSolutionImage.bookName + "\n Page " + CurrentSolutionImage.pageNumber +
                 " question " +CurrentSolutionImage.questionNumber +"\nBy " + CurrentSolutionImage.publisher);
@@ -110,6 +122,16 @@ public class ShowSolution extends AppCompatActivity implements View.OnClickListe
                         put("rate", String.valueOf(rate));
                 rated = true;
             }
+        }else if(v == btnUploadSolution) Toast.makeText(this, "Upload solution will be available on v2.0", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    protected void onStop() {
+        if(networkChangeListener != null){
+            unregisterReceiver(networkChangeListener);
+            networkChangeListener = null;
         }
+        super.onStop();
     }
 }

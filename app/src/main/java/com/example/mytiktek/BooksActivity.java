@@ -1,13 +1,13 @@
 package com.example.mytiktek;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,22 +16,24 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.example.mytiktek.Adapters.BookAdapter;
+import com.example.mytiktek.DataObjects.Book;
+import com.example.mytiktek.DataObjects.Subject;
+import com.example.mytiktek.DataObjects.SubjectBooks;
+import com.example.mytiktek.DataObjects.SubjectsList;
+import com.example.mytiktek.LocalData.CurrentSubjectBooks;
+import com.example.mytiktek.service.NetworkChangeListener;
+import com.example.mytiktek.service.NetworkHelper;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BooksActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
@@ -41,13 +43,15 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
     ListView lvBooks;
     ArrayList<Book> booksList;
     BookAdapter bookAdapter;
-    private ImageView btnHome, subjectImage;
+    private ImageView  subjectImage;
     private ProgressBar pbLoadingBooks;
     Book bookSelected;
+    private ImageView btnHome, btnUploadSolution;
 
     private boolean bookDownloaded; //true if the books and their images done to download
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference booksRef;
+    private NetworkChangeListener networkChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +62,13 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
         setContentView(R.layout.activity_books);
 
         bookDownloaded = false;
-        btnHome = (ImageView)findViewById(R.id.btnHome);
-        btnHome.setOnClickListener(this);
         subjectImage = (ImageView)findViewById(R.id.booksActivitySubjectImage);
         subjectName = (TextView)findViewById(R.id.subjectName);
         pbLoadingBooks = (ProgressBar)findViewById(R.id.pbLoadingBooks);
+        btnUploadSolution = (ImageView)findViewById(R.id.btnUploadSolution);
+        btnUploadSolution.setOnClickListener(this);
+        btnHome = (ImageView)findViewById(R.id.btnHome);
+        btnHome.setOnClickListener(this);
 
         Intent intent = getIntent();
         currentSubjectName = intent.getExtras().getString("SubjectName");
@@ -76,7 +82,22 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
         booksRef = db.collection("subjects").document(currentSubjectName);
         lvBooks = (ListView)findViewById(R.id.lvSBooks);
         lvBooks.setOnItemClickListener(this);
-        initBooks();
+        checkNetworkConnection();
+    }
+
+    private void checkNetworkConnection() {
+        if(!NetworkHelper.isConnectedToInternet(this)) {
+            Toast.makeText(this, "Waiting for Internet connection", Toast.LENGTH_SHORT).show();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkNetworkConnection();
+                }
+            }, 3000);
+        }else{
+            initBooks();
+        }
     }
 
     @Override
@@ -85,6 +106,21 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
         if(bookDownloaded) pbLoadingBooks.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    protected void onStart() {
+        networkChangeListener = new NetworkChangeListener();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeListener, intentFilter);
+        super.onStart();
+    }
+    @Override
+    protected void onStop() {
+        if(networkChangeListener != null){
+            unregisterReceiver(networkChangeListener);
+            networkChangeListener = null;
+        }
+        super.onStop();
+    }
     private void initBooks() {
         pbLoadingBooks.setVisibility(View.VISIBLE);
         CurrentSubjectBooks.books = new ArrayList<Book>();
@@ -100,10 +136,6 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
                 }
 
                 downloadBookCoverImages();
-                //if(CurrentSubjectBooks.books.get(0).getBookCoverUrl().equals("https://firebasestorage.googleapis.com/v0/b/my-tiktek.appspot.com/o/Books%20Images%2Fmath_book1_cover.jpg?alt=media&token=6af03d34-60e5-4d31-9dc5-d59dd7eaf358")){
-                //    CurrentSubjectBooks.books.get(0).setBookImage(BitmapFactory.decodeResource(getResources(), R.drawable.math_book1_cover));
-                //} //to reduce time while waiting for server to sent book cover image
-           //     bookAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -153,6 +185,9 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
         if(v == btnHome){
             setResult(0);
             finish();
+        }else if(v == btnUploadSolution){
+            Toast.makeText(this, "Upload solution will be available on v2.0", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

@@ -3,31 +3,29 @@ package com.example.mytiktek;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.mytiktek.DataObjects.Book;
+import com.example.mytiktek.LocalData.CurrentSolutionImage;
+import com.example.mytiktek.LocalData.CurrentSubjectBooks;
+import com.example.mytiktek.service.NetworkChangeListener;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 
 public class ExerciseSelection extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,10 +33,10 @@ public class ExerciseSelection extends AppCompatActivity implements View.OnClick
     private Button btnSearch;
     private TextView tvBookName;
     private ImageView ivBookCoverImage;
-    private ImageView btnHome;
     private ProgressBar progressBar;
-
+    private NetworkChangeListener networkChangeListener;
     private Book currentBook;
+    private ImageView btnHome, btnUploadSolution;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference booksRef;
@@ -51,13 +49,18 @@ public class ExerciseSelection extends AppCompatActivity implements View.OnClick
         getSupportActionBar().hide();
         setContentView(R.layout.activity_exercise_selection);
 
-        currentBook = CurrentSubjectBooks.books.get(getIntent().getExtras().getInt("BookPosition"));
+        networkChangeListener = new NetworkChangeListener();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeListener, intentFilter);
 
+        currentBook = CurrentSubjectBooks.books.get(getIntent().getExtras().getInt("BookPosition"));
+        btnUploadSolution = (ImageView)findViewById(R.id.btnUploadSolution);
+        btnUploadSolution.setOnClickListener(this);
+        btnHome = (ImageView)findViewById(R.id.btnHome);
+        btnHome.setOnClickListener(this);
         tvBookName = (TextView)findViewById(R.id.bookName);
         tvBookName.setText(currentBook.getBookName());
         ivBookCoverImage = (ImageView)findViewById(R.id.bookImage);
-        btnHome = (ImageView)findViewById(R.id.btnHome);
-        btnHome.setOnClickListener(this);
         progressBar = (ProgressBar)findViewById(R.id.pbLoadingImage);
 
         if(currentBook.getBookImage() != null) {
@@ -84,6 +87,8 @@ public class ExerciseSelection extends AppCompatActivity implements View.OnClick
         }else if(v == btnHome){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+        }else if(v == btnUploadSolution){
+            Toast.makeText(this, "Upload solution will be available on v2.0", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -128,5 +133,14 @@ public class ExerciseSelection extends AppCompatActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
         progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    protected void onStop() {
+        if(networkChangeListener != null){
+            unregisterReceiver(networkChangeListener);
+            networkChangeListener = null;
+        }
+        super.onStop();
     }
 }

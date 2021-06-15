@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,10 +14,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mytiktek.service.NetworkChangeListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,7 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText mFullName,mEmail,mPassword,mPhone;
     Button mRegisterBtn;
@@ -39,6 +43,8 @@ public class RegisterActivity extends AppCompatActivity {
     ProgressBar progressBar;
     FirebaseFirestore fStore;
     String userID;
+    private NetworkChangeListener networkChangeListener;
+    private ImageView btnHome, btnUploadSolution;
 
 
     @Override
@@ -48,6 +54,10 @@ public class RegisterActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_register);
+
+        networkChangeListener = new NetworkChangeListener();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeListener, intentFilter);
 
         mFullName   = findViewById(R.id.fullName);
         mEmail      = findViewById(R.id.Email);
@@ -60,6 +70,11 @@ public class RegisterActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         progressBar = findViewById(R.id.progressBar);
+
+        btnUploadSolution = (ImageView)findViewById(R.id.btnUploadSolution);
+        btnUploadSolution.setOnClickListener(this);
+        btnHome = (ImageView)findViewById(R.id.btnHome);
+        btnHome.setOnClickListener(this);
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,5 +169,24 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStop() {
+        if(networkChangeListener != null){
+            unregisterReceiver(networkChangeListener);
+            networkChangeListener = null;
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == btnHome){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }else if(v == btnUploadSolution){
+            Toast.makeText(this, "Upload solution will be available on v2.0", Toast.LENGTH_SHORT).show();
+        }
     }
 }
