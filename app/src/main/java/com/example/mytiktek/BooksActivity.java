@@ -88,6 +88,7 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
     private void initBooks() {
         pbLoadingBooks.setVisibility(View.VISIBLE);
         CurrentSubjectBooks.books = new ArrayList<Book>();
+        CurrentSubjectBooks.setSubjectName(currentSubjectName);
 
         booksRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override

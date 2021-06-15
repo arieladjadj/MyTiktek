@@ -69,10 +69,10 @@ public class ExerciseSelection extends AppCompatActivity implements View.OnClick
 
         npQuestionNumber = (NumberPicker) findViewById(R.id.npQuestionNumber);
         npQuestionNumber.setMinValue(1);
-        npQuestionNumber.setMaxValue(400);
+        npQuestionNumber.setMaxValue(160);
         npPageNumber = (NumberPicker) findViewById(R.id.npPageNumber);
         npPageNumber.setMinValue(1);
-        npPageNumber.setMaxValue(400);
+        npPageNumber.setMaxValue(Integer.valueOf(currentBook.getNumberOfPages()));
         btnSearch = (Button) findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(this);
     }
@@ -107,6 +107,9 @@ public class ExerciseSelection extends AppCompatActivity implements View.OnClick
                     CurrentSolutionImage.bookName = currentBook.getBookName();
                     CurrentSolutionImage.pageNumber = pageNumber;
                     CurrentSolutionImage.questionNumber = questionNumber;
+                    CurrentSolutionImage.solutionRate = currentBook.getPages().get(pageNumber).get(questionNumber).get("rate");
+                    CurrentSolutionImage.publisher = currentBook.getPages().get(pageNumber).get(questionNumber).get("publisher");
+                    CurrentSolutionImage.bookPos = String.valueOf(getIntent().getExtras().getInt("BookPosition"));
 
                     Intent intent = new Intent(ExerciseSelection.this, ShowSolution.class);
                     startActivity(intent);

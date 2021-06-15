@@ -13,6 +13,8 @@ public class Book {
     private String description1;
     private String description2;
     private String authors;
+    private String numberOfPages;
+
     private Map<String,Map<String,Map<String, String>>> pages;  /*  pages:
                                                             1:
                                                               1:
@@ -26,6 +28,14 @@ public class Book {
                                                                 solutionUrl: www.picture.com
                                                                 rate: 4.3
                                                      */
+
+    public String getNumberOfPages() {
+        return numberOfPages;
+    }
+
+    public void setNumberOfPages(String numberOfPages) {
+        this.numberOfPages = numberOfPages;
+    }
 
     public String getBookName() {
         return bookName;

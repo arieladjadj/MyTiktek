@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -59,16 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         progressBar = findViewById(R.id.progressBar);
-
-        ////DELETE
-        fAuth.signOut();//logout
-        ///
-
-/*        if(fAuth.getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
-            finish();
-        }*/
-
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +110,9 @@ public class RegisterActivity extends AppCompatActivity {
                                     Log.d("Ariel", "onFailure: Email not sent " + e.getMessage());
                                 }
                             });
+
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName("John Smith").build();
+                            fuser.updateProfile(profileUpdates);
 
                             Toast.makeText(RegisterActivity.this, "User Created.", Toast.LENGTH_SHORT).show();
                             userID = fAuth.getCurrentUser().getUid();

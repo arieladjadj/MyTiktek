@@ -1,6 +1,7 @@
 package com.example.mytiktek;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.transition.Slide;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -8,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,8 +40,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     SubjectAdapter subjectAdapter;
     Bitmap home0;
     Subject subjectSelected;
-    private Button btnMyProfile;
-    private ImageView btnHome;
+    private Button btnMyProfile, btnSolutionsHistory;
+    private ImageView btnHome, btnUploadSolution;
 
     private Dialog dialog;
 
@@ -53,12 +57,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
+        btnUploadSolution = (ImageView)findViewById(R.id.btnUploadSolution);
+        btnUploadSolution.setOnClickListener(this);
         lvSubjects = (ListView)findViewById(R.id.lvSubjects);
         lvSubjects.setOnItemClickListener(this);
         btnHome = (ImageView)findViewById(R.id.btnHome);
         btnMyProfile = (Button)findViewById(R.id.btnMyProfile);
         btnMyProfile.setOnClickListener(this);
-
+        btnSolutionsHistory = (Button)findViewById(R.id.btnSolutionsHistory);
+        btnSolutionsHistory.setOnClickListener(this);
     }
 
     @Override
@@ -90,17 +97,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivityForResult(intent, 0);
     }
 
-    public void createLoginOrRegisterDialog()
+    public void createLoginOrRegisterDialog(Class nextActivity)
     {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         if(firebaseAuth.getCurrentUser() != null){
             Intent intent;
             if(firebaseAuth.getCurrentUser().isEmailVerified()){
-               intent  = new Intent(this, ShowProfileActivity.class);
+               intent  = new Intent(this, nextActivity);
             }else{
                // intent = new Intent(this, EmailVerification.class);
-                intent  = new Intent(this, ShowProfileActivity.class);
+                intent  = new Intent(this, nextActivity);
 
             }
             startActivityForResult(intent, 0);
@@ -132,7 +139,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onClick(View v) {
         if(v == btnMyProfile){
-            createLoginOrRegisterDialog();
+            createLoginOrRegisterDialog(ShowProfileActivity.class);
+        }else if(v == btnSolutionsHistory) {
+            createLoginOrRegisterDialog(SolutionsHistoryActivity.class);
+        }else if(v == btnUploadSolution){
+            Toast.makeText(this, "Upload solution will be available on v2.0", Toast.LENGTH_SHORT).show();
         }
     }
 }

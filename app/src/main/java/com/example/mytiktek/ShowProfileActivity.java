@@ -2,10 +2,12 @@ package com.example.mytiktek;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,6 +28,7 @@ public class ShowProfileActivity extends AppCompatActivity implements View.OnCli
     private String currentUid;
     private DocumentReference userRef;
     private User currentUser;
+    private ImageView ivSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +46,22 @@ public class ShowProfileActivity extends AppCompatActivity implements View.OnCli
         tvAverageRate = (TextView)findViewById(R.id.tvAverageRate);
         tvEmail = (TextView)findViewById(R.id.showProfileEmail);
         tvPhoneNumber = (TextView)findViewById(R.id.showProfilePhoneNumber);
+        ivSetting = (ImageView)findViewById(R.id.settings);
+        ivSetting.setOnClickListener(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
         currentUid = firebaseAuth.getCurrentUser().getUid();
+
+        String ariel = firebaseAuth.getCurrentUser().getDisplayName();
+
+      //  initUserFields();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         initUserFields();
     }
 
@@ -74,6 +89,9 @@ public class ShowProfileActivity extends AppCompatActivity implements View.OnCli
             firebaseAuth.signOut();
             setResult(0);
             finish();
+        }else if(v == ivSetting){
+            Intent intent = new Intent(this, EditProfileActivity.class);
+            startActivity(intent);
         }
     }
 }

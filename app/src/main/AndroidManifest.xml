@@ -11,7 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTiktek"
         tools:ignore="AllowBackup">
-        <activity android:name=".EmailVerification"></activity>
+        <activity android:name=".EditProfileActivity"></activity>
+        <activity android:name=".SolutionsHistoryActivity" />
+        <activity android:name=".EmailVerification" />
         <activity android:name=".ShowProfileActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />

@@ -70,6 +70,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="History"
+                android:id="@+id/btnSolutionsHistory"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 />
