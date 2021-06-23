@@ -108,7 +108,6 @@ public class ExerciseSelection extends AppCompatActivity implements View.OnClick
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     CurrentSolutionImage.solutionImage = loadedImage;
-                   // CurrentSolutionImage.bookCoverImage = currentBook.getBookImage();
                     CurrentSolutionImage.bookName = currentBook.getBookName();
                     CurrentSolutionImage.pageNumber = pageNumber;
                     CurrentSolutionImage.questionNumber = questionNumber;

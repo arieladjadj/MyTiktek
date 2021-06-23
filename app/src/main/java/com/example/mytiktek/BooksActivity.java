@@ -143,6 +143,7 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
     private void downloadBookCoverImages(){
         ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
 
+        if(CurrentSubjectBooks.books.size() == 0) {showBooks();}
         for (int i = 0; i < CurrentSubjectBooks.books.size(); i++) {
             int finalI = i;  //If there is no subject image bitmap - download it from firebase server
             if(CurrentSubjectBooks.books.get(i).getBookImage() == null) {
@@ -172,10 +173,7 @@ public class BooksActivity extends AppCompatActivity implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //bookSelected = bookAdapter.getItem(position);
         Intent intent = new Intent(BooksActivity.this, ExerciseSelection.class);
-        //intent.putExtra("BookName", bookSelected.getBookName());
-        //intent.putExtra("SubjectPicture"...)
         intent.putExtra("BookPosition", position);
         startActivityForResult(intent, 0);
     }

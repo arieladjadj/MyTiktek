@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if(firebaseAuth.getCurrentUser().isEmailVerified()){
                intent  = new Intent(this, nextActivity);
             }else{
-               // intent = new Intent(this, EmailVerification.class);
+               // intent = new Intent(this, EmailVerification.class);  //V2.0
                 intent  = new Intent(this, nextActivity);
 
             }
